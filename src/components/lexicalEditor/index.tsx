@@ -28,6 +28,7 @@ const EditorPlaceHolder = styled("div")(() => ({
   left: "15px",
   fontSize: "15px",
   userSelect: "none",
+  pointerEvents: "none",
 }));
 
 const StyledContentEditable = styled(ContentEditable)(() => ({

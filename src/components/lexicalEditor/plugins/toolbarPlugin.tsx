@@ -18,6 +18,7 @@ import {
   UNDO_COMMAND,
 } from "lexical";
 import {
+  Baseline,
   Bold,
   Heading1,
   Heading2,
@@ -25,6 +26,7 @@ import {
   Heading4,
   Heading5,
   Heading6,
+  Highlighter,
   Italic,
   List,
   ListOrdered,
@@ -60,6 +62,7 @@ import {
   $getNearestNodeOfType,
   mergeRegister,
 } from "@lexical/utils";
+import ColorPickerDropDown from "../../ui/colorpickerdropdown";
 
 const blockTypeToBlockName = {
   bullet: "Bulleted List",
@@ -111,9 +114,10 @@ const StyledToolbar = styled("div")(() => ({
   borderTopRightRadius: "4px",
   verticalAlign: "middle",
   borderBottom: "1px solid #eee",
+  gap: "2px",
 
   ".divider": {
-    width: "2px",
+    width: "1px",
     backgroundColor: "#eee",
     margin: "0 4px",
   },
@@ -133,10 +137,10 @@ const StyledToolbar = styled("div")(() => ({
   },
 }));
 
-function dropDownActive(active: boolean) {
-  if (active) return true;
-  return false;
-}
+// function dropDownActive(active: boolean) {
+//   if (active) return true;
+//   return false;
+// }
 
 type BlockFormatPluginProps = {
   disabled: boolean;
@@ -201,23 +205,23 @@ function BlockFormatPlugin({
       }
     }
 
-    if (blockType !== "bullet") {
-      editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
-    } else {
-      editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
-    }
+    // if (blockType !== "bullet") {
+    //   editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
+    // } else {
+    //   editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
+    // }
 
-    if (blockType !== "check") {
-      editor.dispatchCommand(INSERT_CHECK_LIST_COMMAND, undefined);
-    } else {
-      editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
-    }
+    // if (blockType !== "check") {
+    //   editor.dispatchCommand(INSERT_CHECK_LIST_COMMAND, undefined);
+    // } else {
+    //   editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
+    // }
 
-    if (blockType !== "number") {
-      editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
-    } else {
-      editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
-    }
+    // if (blockType !== "number") {
+    //   editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
+    // } else {
+    //   editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
+    // }
   };
 
   const items: item[] = [
@@ -371,7 +375,7 @@ const ToolbarPlugin = () => {
   const [fontSize, setFontSize] = useState<string>("15px");
   const [fontColor, setFontColor] = useState<string>("#000");
   const [fontFamily, setFontFamily] = useState<string>("Arial");
-  const [bgColor, setBgColor] = useState<string>("#fff");
+  const [bgColor, setBgColor] = useState<string>("#000");
   const updateToolbar = useCallback(() => {
     const selection = $getSelection();
 
@@ -437,7 +441,7 @@ const ToolbarPlugin = () => {
         $getSelectionStyleValueForProperty(
           selection,
           "background-color",
-          "#fff"
+          "#000"
         )
       );
       setFontFamily(
@@ -488,6 +492,34 @@ const ToolbarPlugin = () => {
     );
   }, [updateToolbar, activeEditor, editor]);
 
+  const applyStyleText = useCallback(
+    (styles: Record<string, string>) => {
+      activeEditor.update(() => {
+        const selection = $getSelection();
+        if (
+          $isRangeSelection(selection) ||
+          DEPRECATED_$isGridSelection(selection)
+        ) {
+          $patchStyleText(selection, styles);
+        }
+      });
+    },
+    [activeEditor]
+  );
+
+  const onFontColorSelect = useCallback(
+    (value: string) => {
+      applyStyleText({ color: value });
+    },
+    [applyStyleText]
+  );
+  const onBgColorSelect = useCallback(
+    (value: string) => {
+      applyStyleText({ "background-color": value });
+    },
+    [applyStyleText]
+  );
+
   return (
     <StyledToolbar>
       <button
@@ -517,9 +549,35 @@ const ToolbarPlugin = () => {
             rootType={rootType}
             editor={editor}
           />
+          <ListPlugin />
           <div className="divider" />
         </>
       )}
+      <FontFormatPlugin
+        editor={editor}
+        value={fontFamily}
+        style={"font-family"}
+      />
+      <FontFormatPlugin editor={editor} value={fontSize} style={"font-size"} />
+      <div className="divider" />
+      <ColorPickerDropDown
+        trigger={
+          <button className="toolbar-item">
+            <Baseline size={18} color={fontColor} />
+          </button>
+        }
+        color={fontColor}
+        onColorChange={onFontColorSelect}
+      />
+      <ColorPickerDropDown
+        trigger={
+          <button className="toolbar-item">
+            <Highlighter size={18} color={bgColor} />
+          </button>
+        }
+        color={bgColor}
+        onColorChange={onBgColorSelect}
+      />
       <button
         className={`toolbar-item ${isBold ? "active" : ""}`}
         disabled={!isEditable}
@@ -547,14 +605,6 @@ const ToolbarPlugin = () => {
       >
         <Underline size={18} />
       </button>
-      <div className="divider" />
-      <ListPlugin />
-      <FontFormatPlugin
-        editor={editor}
-        value={fontFamily}
-        style={"font-family"}
-      />
-      <FontFormatPlugin editor={editor} value={fontSize} style={"font-size"} />
     </StyledToolbar>
   );
 };

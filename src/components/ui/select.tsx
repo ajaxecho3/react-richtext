@@ -6,7 +6,7 @@ import { ChevronDown } from "lucide-react";
 export interface item<T> {
   value: T;
   label: string;
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
 }
 
 export interface SelectProps<T> {
