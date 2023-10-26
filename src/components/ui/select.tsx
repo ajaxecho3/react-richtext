@@ -1,22 +1,22 @@
-import React, { ReactElement } from "react";
+import React from "react";
 import styled from "@emotion/styled";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { ChevronDown } from "lucide-react";
 
-export interface item {
-  value: string;
+export interface item<T> {
+  value: T;
   label: string;
-  icon: ReactElement;
+  icon: React.ReactNode;
 }
 
-export interface SelectProps {
+export interface SelectProps<T> {
   value: string;
   defaultValue: string;
-  items: item[];
+  items: item<T>[];
   onChange: (e: string) => void;
 }
 
-const Select = ({ value, defaultValue, items, onChange }: SelectProps) => {
+function Select<T>({ value, defaultValue, items, onChange }: SelectProps<T>) {
   return (
     <SelectPrimitive.Root
       value={value}
@@ -33,7 +33,10 @@ const Select = ({ value, defaultValue, items, onChange }: SelectProps) => {
         <SelectContent position="popper" sideOffset={2}>
           <SelectViewport>
             {items.map((item) => (
-              <SelectItem value={item.value} key={item.value}>
+              <SelectItem
+                value={item.value as string}
+                key={item.value as string}
+              >
                 <div
                   style={{
                     display: "flex",
@@ -50,7 +53,7 @@ const Select = ({ value, defaultValue, items, onChange }: SelectProps) => {
       </SelectPrimitive.Portal>
     </SelectPrimitive.Root>
   );
-};
+}
 
 const SelectTrigger = styled(SelectPrimitive.SelectTrigger)(() => ({
   all: "unset",

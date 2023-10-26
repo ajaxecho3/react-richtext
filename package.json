@@ -17,6 +17,7 @@
     "@lexical/react": "^0.12.2",
     "@lexical/rich-text": "^0.12.2",
     "@lexical/selection": "^0.12.2",
+    "@lexical/utils": "^0.12.2",
     "@radix-ui/react-select": "^2.0.0",
     "lexical": "^0.12.2",
     "lucide-react": "^0.288.0",

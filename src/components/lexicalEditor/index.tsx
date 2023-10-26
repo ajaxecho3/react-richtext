@@ -7,7 +7,7 @@ import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 import ToolbarPlugin from "./plugins/toolbarPlugin";
 import exampleTheme from "./exampleTheme";
-import { HeadingNode } from "@lexical/rich-text";
+import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { ListItemNode, ListNode } from "@lexical/list";
 
 const EditorContainer = styled("div")(() => ({}));
@@ -56,7 +56,7 @@ const EditorComponent = () => {
     namespace: "editor",
     theme: exampleTheme,
     onError,
-    nodes: [HeadingNode, ListNode, ListItemNode],
+    nodes: [HeadingNode, ListNode, ListItemNode, QuoteNode],
   };
   return (
     <StyledContainer>
